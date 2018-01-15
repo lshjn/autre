@@ -309,7 +309,7 @@ FAR struct cc1101_upperhalf_s *cc1101_fd;
 #define SUCCESS                      		 1
 #define FAIL                      			 0
 
-/*
+
 uint8_t PA_table[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
 
 //lsh  tx
@@ -358,7 +358,7 @@ struct c1101_rfsettings_s rfSettings = {
 	.TEST1  =0x35, // TEST1 Various test settings.
 	.TEST0  =0x09, // TEST0 Various test settings.		
 };
-*/
+
 
 
 //lsh  rx
