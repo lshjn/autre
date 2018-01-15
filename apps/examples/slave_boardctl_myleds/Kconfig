@@ -1,0 +1,36 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_SLAVE_BOARDCTL_MYLEDS
+	bool "MY SLAVE BOARDCTL LED driver example"
+	default n
+	---help---
+		Enable the LED driversexample
+
+if EXAMPLES_SLAVE_BOARDCTL_MYLEDS
+
+
+config EXAMPLES_SLAVE_BOARDCTL_MYLEDS_PROGNAME
+	string "Program name"
+	default "slave boardctl myleds"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_SLAVE_BOARDCTL_MYLEDS_PRIORITY
+	int "SLAVE BOARDCTL MYLED task priority"
+	default 100
+
+config EXAMPLES_SLAVE_BOARDCTL_MYLEDS_STACKSIZE
+	int "SLAVE BOARDCTL MYLED stack size"
+	default 2048
+
+
+config EXAMPLES_SLAVE_BOARDCTL_MYLEDS_LEDSET
+	hex "Subset of SLAVE BOARDCTL MYLEDs to use"
+	default 0x0f
+
+endif # EXAMPLES_SLAVE_BOARDCTL_MYLEDS

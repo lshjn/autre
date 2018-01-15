@@ -1,0 +1,36 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config EXAMPLES_AM2320
+	bool "AM2320 driver example"
+	default n
+	---help---
+		Enable the AM2320 driversexample
+
+if EXAMPLES_AM2320
+
+
+config EXAMPLES_AM2320_PROGNAME
+	string "Program name"
+	default "am2320"
+	depends on BUILD_KERNEL
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config EXAMPLES_AM2320_PRIORITY
+	int "AM2320 task priority"
+	default 100
+
+config EXAMPLES_AM2320_STACKSIZE
+	int "AM2320 stack size"
+	default 2048
+
+config EXAMPLES_AM2320_DEVPATH
+	string "AM2320 device path"
+	default "/dev/i2c2"
+
+
+endif # EXAMPLES_AM2320
