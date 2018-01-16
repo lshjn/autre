@@ -68,6 +68,82 @@
  * hello_main
  ****************************************************************************/
 
+int cc1101_rx(int argc, char *argv[])
+{
+	struct timeval timeout;
+	fd_set 	rfds;	
+
+
+    boardctl(BOARDIOC_433_A3V_PWRON, 0);
+
+    printf("Hello, World!!\n");
+	int fd;
+	int i=0;
+	int data=0;
+    char rxbuff[255];
+	int  	iRet = 0;
+	int  	iBytes = 0;
+
+	fd = open("/dev/cc1101", O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
+	if (fd < 0)
+	{
+		printf("open cc1101 error:\n");
+	}
+
+	while(1)
+	{
+		printf("select-----\n");
+		FD_ZERO(&rfds);											
+		FD_SET(fd, &rfds);									
+		timeout.tv_sec = 10;
+		timeout.tv_usec = 0;
+		iRet = select(fd+1, &rfds, NULL, NULL, &timeout);  	//recv-timeout
+
+		if (iRet < 0) 
+		{
+			printf("select error!!!\n");
+		}
+		else if(iRet == 0)
+		{
+			printf("cc1101 rcv timeout!!!\n");
+		}
+		else
+		{
+			if(FD_ISSET(fd, &rfds)) 
+			{
+				usleep(300*1000L);                                     //sleep 100ms
+				memset(rxbuff, 0, sizeof(rxbuff));
+			    iBytes = read(fd ,rxbuff,sizeof(rxbuff));
+				if(iBytes == -1)
+				{
+					printf("Error:read  Data from cc1101\n");
+				}
+	            else
+	           	{
+					printf("read  data from cc1101\n");
+					for(i=0;i<iBytes;i++)
+					{
+						printf("<%d>=%d\n",i,rxbuff[i]);
+					}
+					//printf("rcv bytes=<%d>......................................................\n",iBytes);
+				}
+			    tcflush(fd, TCIFLUSH);
+				/*************************************************************************************/
+				//printf("rcv gps <%d> bytes msg:%s\n",iBytes,cArray);
+				/*************************************************************************************/
+			}
+		}
+	}
+    
+	
+  return 0;
+
+}
+
+
+
+
+
  #define TX_BUF 60
  
 #ifdef CONFIG_BUILD_KERNEL
@@ -76,49 +152,57 @@ int main(int argc, FAR char *argv[])
 int hello_main(int argc, char *argv[])
 #endif
 {
+
+	task_create("cc1101_rx", 100,2048, cc1101_rx,NULL);
+
+	struct timeval timeout;
+	fd_set 	rfds;	
+
+
+    boardctl(BOARDIOC_433_A3V_PWRON, 0);
+
     printf("Hello, World!!\n");
 	int fd;
-	int iBytes;
 	int i=0;
 	int data=0;
     char txbuff[TX_BUF]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     char rxbuff[255];
+	int  	iRet = 0;
+	int  	iBytes = 0;
 
-    int  test=0;
-
-    boardctl(BOARDIOC_433_A3V_PWRON, 0);
-	
-	fd = open("/dev/cc1101", O_RDWR);
+	fd = open("/dev/cc1101", O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
 	if (fd < 0)
 	{
 		printf("open cc1101 error:\n");
 	}
+
+	
 	
 	if(strcmp(argv[1],"t") == 0)
 	{
 		while(1)
 		{
-
+			sleep(5);
 			printf("write  data to cc1101\n");
-
+		
 			for(i=0;i<TX_BUF;i++)
 			{
 				txbuff[i]=i;
-				printf("<%d>=%d\n",i,txbuff[i]);				
+				//printf("<%d>=%d\n",i,txbuff[i]);				
 			}
-		
-			printf("write  data len=<%d>\n",sizeof(txbuff));
+			printf("send bytes=<%d>......................................................\n",iBytes);
 		    iBytes = write(fd ,txbuff,sizeof(txbuff));
 			if(iBytes == -1)
 			{
 				printf("Error:write  Data to cc1101\n");
 			}
 
-			sleep(3);
+			
 		}
 	}
 	else if(strcmp(argv[1],"r") == 0)
 	{
+	/*
 		while(1)
 		{
 		    iBytes = read(fd ,rxbuff,sizeof(rxbuff));
@@ -136,6 +220,72 @@ int hello_main(int argc, char *argv[])
 			}
 			sleep(3);
 		}
+		*/
+	
+		while(1)
+		{
+			printf("select-----\n");
+			FD_ZERO(&rfds);											
+			FD_SET(fd, &rfds);									
+			timeout.tv_sec = 10;
+			timeout.tv_usec = 0;
+			iRet = select(fd+1, &rfds, NULL, NULL, &timeout);  	//recv-timeout
+
+			if (iRet < 0) 
+			{
+				printf("select error!!!\n");
+			}
+			else if(iRet == 0)
+			{
+				printf("cc1101 rcv timeout!!!\n");
+			}
+			else
+			{
+				if(FD_ISSET(fd, &rfds)) 
+				{
+					usleep(300*1000L);                                     //sleep 100ms
+					memset(rxbuff, 0, sizeof(rxbuff));
+				    iBytes = read(fd ,rxbuff,sizeof(rxbuff));
+					if(iBytes == -1)
+					{
+						printf("Error:read  Data from cc1101\n");
+					}
+		            else
+		           	{
+						printf("read  data from cc1101\n");
+						for(i=0;i<iBytes;i++)
+						{
+							printf("<%d>=%d\n",i,rxbuff[i]);
+						}
+                    /******************************************************************/
+					//ACK
+						usleep(300*1000L);                                     //sleep 100ms
+						printf("write ack to cc1101\n");
+						for(i=0;i<10;i++)
+						{
+							txbuff[i]=10+i;
+							printf("<%d>=%d\n",i,txbuff[i]);				
+						}
+						
+					    iBytes = write(fd ,txbuff,10);
+						if(iBytes == -1)
+						{
+							printf("Error:write  Data to cc1101\n");
+						}
+					
+
+					/*******************************************************************/
+
+						
+					}
+				    tcflush(fd, TCIFLUSH);
+					/*************************************************************************************/
+					//printf("rcv gps <%d> bytes msg:%s\n",iBytes,cArray);
+					/*************************************************************************************/
+				}
+			}
+	}
+	    
 	}
 
 	

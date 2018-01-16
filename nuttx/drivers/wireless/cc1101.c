@@ -1082,7 +1082,7 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 	
 	else if(cc1101_rxtx_status.workmode == CC1101_MODE_TX)
 	{		
-		//wait untill txbyte ok
+		cc1101_rxtx_status.tx_status = SUCCESS;
 		spierr("cc1101 <%d> TX int\n",cc1101_interrupt);
 	}
 	else
@@ -1409,8 +1409,8 @@ int cc1101_sendmode(FAR struct cc1101_dev_s *dev)
 {
 	ASSERT(dev);
 
-	//cc1101_strobe(dev, CC1101_SIDLE);
-	//cc1101_strobe(dev, CC1101_SFTX);
+	cc1101_strobe(dev, CC1101_SIDLE);
+	cc1101_strobe(dev, CC1101_SFTX);
 
     cc1101_rxtx_status.workmode = CC1101_MODE_TX;
 	rfSettings.IOCFG2 = CC1101_GDO2_TX;
@@ -1461,10 +1461,6 @@ int cc1101_write(FAR struct cc1101_dev_s *dev, const uint8_t *buf, size_t size)
       packetlen = size;
     }
 
-	cc1101_access(dev, CC1101_MARCSTATE, (FAR uint8_t *)&ttttt, -1);
-	spierr("CC1101_MARCSTATE=%x\n",ttttt);
-	ttttt = cc1101_strobe(dev, CC1101_TXBYTES);
-	spierr("CC1101_TXBYTES=%x\n",ttttt);
 
 	cc1101_strobe(dev, CC1101_SIDLE);
 	cc1101_strobe(dev, CC1101_SFTX);
@@ -1488,17 +1484,22 @@ int cc1101_write(FAR struct cc1101_dev_s *dev, const uint8_t *buf, size_t size)
 int cc1101_send(FAR struct cc1101_dev_s *dev)
 {
 	int cnt=0;
-
+	int bytes=0;
+	
 	ASSERT(dev);
 
-	//cc1101_interrupt = 0;
 	cc1101_strobe(dev, CC1101_STX);
 
-    //wait send ok
-    usleep(10*1000);
+	//wait untill txbyte ok
+	do
+	{
+		bytes = cc1101_strobe(dev, CC1101_TXBYTES);
+	}while((bytes &0x7F) != 0);
 
+	//usleep(10*1000);
+	//spierr("=================================\n");
 	
-	cc1101_rxtx_status.tx_status = SUCCESS;
+	cc1101_rxtx_status.tx_status = FAIL;
 	//goto recv
 	cc1101_receive(dev);
 
