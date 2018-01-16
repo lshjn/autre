@@ -1496,8 +1496,6 @@ int cc1101_send(FAR struct cc1101_dev_s *dev)
 		bytes = cc1101_strobe(dev, CC1101_TXBYTES);
 	}while((bytes &0x7F) != 0);
 
-	//usleep(10*1000);
-	//spierr("=================================\n");
 	
 	cc1101_rxtx_status.tx_status = FAIL;
 	//goto recv
