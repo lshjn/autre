@@ -1023,7 +1023,9 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 	uint8_t nbytes;
 	uint8_t addr;
 	int status = 0;
+	uint8_t crc[2];
 	int temp = 0;
+	static int crcerror = 0;
 
 	cc1101_interrupt++;
 	
@@ -1033,25 +1035,36 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 		status = cc1101_strobe((FAR struct cc1101_dev_s *)arg, CC1101_RXBYTES);
 	    if(status&0x7f)
 	    {
-			spierr("cc1101  status=%d.....................\n",status);
+			spierr("cc1101  status=%d\n",status);
 			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, &nbytes, 1);
-			spierr("cc1101  nbytes=%d.....................\n",nbytes);
-			//addr check
-			//cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, &addr, 1);
+			spierr("cc1101  nbytes=%d\n",nbytes);
 			
-	    	//nbytes = status;
+	    	//nbytes
 			cc1101_rxtx_status.rx_len = nbytes;
-			//nbytes += 2;
 			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, cc1101_rxtx_status.rxbuf, (nbytes > sizeof(cc1101_rxtx_status.rxbuf)) ? sizeof(cc1101_rxtx_status.rxbuf) : nbytes);
-     
-			//add by liushuhe 2017.12.04	  
-			cc1101_receive((FAR struct cc1101_dev_s *)arg);
-			
+
+			//crc
+			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, crc, 2);
+			if(crc[1]&0x80)
+			{
+				spierr("crc ok\n");
+			}
+			else
+			{
+				spierr("crc error\n");
+				crcerror++;
+			}
+	 
+			/*
 	        int i=0;
 			for(i=0;i<nbytes;i++)
 			{
 				spierr("[%d]=%d     \n",i,cc1101_rxtx_status.rxbuf[i]);
 			}
+			*/
+			
+			//add by liushuhe 2017.12.04	  
+			cc1101_receive((FAR struct cc1101_dev_s *)arg);
 			
 			cc1101_rxtx_status.rx_status = SUCCESS;
 
@@ -1061,21 +1074,22 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 		{
 			//add by liushuhe 2017.12.04	  
 			cc1101_receive((FAR struct cc1101_dev_s *)arg);
-			spierr("Error: cc1101 <%d> RX int status=%d  nbytes=%d.....................\n",cc1101_interrupt,status,nbytes);
+			spierr("Error: cc1101 <%d> RX int status=%d  nbytes=%d\n",cc1101_interrupt,status,nbytes);
 		}
-		spierr("cc1101 <%d> RX int....\n",cc1101_interrupt);
+		spierr("cc1101 <%d> RX int crcerror:<%d>\n",cc1101_interrupt,crcerror);
 	}
 	
 	else if(cc1101_rxtx_status.workmode == CC1101_MODE_TX)
 	{		
+		//wait untill txbyte ok
+
 		cc1101_rxtx_status.workmode = CC1101_MODE_RX;
-		//cc1101_rxtx_status.changemodeflag = 1;
 		cc1101_rxtx_status.tx_status = SUCCESS;
-		spierr("cc1101 <%d> TX int....\n",cc1101_interrupt);
+		spierr("cc1101 <%d> TX int\n",cc1101_interrupt);
 	}
 	else
 	{
-		spierr("cc1101_rxtx_status int  error.... \n");
+		spierr("cc1101_rxtx_status int  error\n");
 	}
 	
 	
