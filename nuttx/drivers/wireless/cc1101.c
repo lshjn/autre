@@ -136,6 +136,12 @@
 FAR struct cc1101_upperhalf_s *cc1101_fd;
 
 
+#define CC1101_GDO2_TX  0x02
+#define CC1101_GDO2_RX  0x00
+
+#define CC1101_THER_TX  0x07
+#define CC1101_THER_RX  0x07
+
 /****************************************************************************
  * Chipcon CC1101 Internal Registers
  ****************************************************************************/
@@ -314,10 +320,12 @@ uint8_t PA_table[8] = {0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60 ,0x60};
 
 //lsh  tx
 struct c1101_rfsettings_s rfSettings = {
-	.IOCFG2 = 0x02,    // GDO2 output pin configuration
+	.IOCFG2 = CC1101_GDO2_RX,    // GDO2 output pin configuration 00
 	.IOCFG1 = 0x2e,    // GDO0 output pin configuration
-	.IOCFG0 = 0x02,    // GDO0 output pin configuration
-	.FIFOTHR = 0x07,    // FIFOTHR  tx 61
+	.IOCFG0 = CC1101_GDO2_RX,    // GDO0 output pin configuration
+
+	.FIFOTHR = CC1101_THER_RX,    // FIFOTHR 60
+
 	.SYNC1 = 0xd3,      // Frequency control word, middle byte. 
 	.SYNC0 = 0x91,      // Frequency control word, low byte.
 	.PKTLEN = 0xff,    // Packet length.
@@ -362,86 +370,18 @@ struct c1101_rfsettings_s rfSettings = {
 	
 	.TEST2  =0x81, // TEST2 Various test settings.
 	.TEST1  =0x35, // TEST1 Various test settings.
-	.TEST0  =0x09, // TEST0 Various test settings.		
-};
-
-
-
-//lsh  rx
-/*
-struct c1101_rfsettings_s rfSettings = {
-	.IOCFG2 = 0x00,    // GDO2 output pin configuration
-	.IOCFG1 = 0x2e,    // GDO0 output pin configuration
-	.IOCFG0 = 0x00,    // GDO0 output pin configuration
-
-	.FIFOTHR = 0x0c,    // FIFOTHR 60
-
-	.SYNC1 = 0xd3,      // Frequency control word, middle byte. 
-	.SYNC0 = 0x91,      // Frequency control word, low byte.
-
-	.PKTLEN = 0xff,    // Packet length.
-
-	.PKTCTRL1 = 0x04,  // Packet automation control.
-	.PKTCTRL0 = 0x05,  // Packet automation control.
-
-
-	.ADDR = 0x00,      // Device address.
-
-	.CHANNR = 0x00,     // Channel number
-
-	.FSCTRL1 = 0x08,    // Frequency synthesizer control. 
-	.FSCTRL0 = 0x00,    // Frequency synthesizer control. 
-
-	.FREQ2 = 0x10,      // Frequency control word, high byte. 
-	.FREQ1 = 0xa7,      // Frequency control word, middle byte. 
-	.FREQ0 = 0x62,      // Frequency control word, low byte. 
-
-	.MDMCFG4 = 0x5b,  // MDMCFG4 Modem configuration.
-	.MDMCFG3 = 0xf8,  // MDMCFG3 Modem configuration.
-	.MDMCFG2 = 0x03,  // MDMCFG2 Modem configuration.
-	.MDMCFG1 = 0x22, // MDMCFG1 Modem configuration.
-	.MDMCFG0 = 0xF8, // MDMCFG0 Modem configuration.
-
-	.DEVIATN = 0x47,    // Modem deviation setting (when FSK modulation is enabled). 
-
-	.MCSM2 = 0x07,     // Main Radio Control State Machine configuration.
-	.MCSM1 = 0x30,     // Main Radio Control State Machine configuration.
-	.MCSM0 = 0x18,     // Main Radio Control State Machine configuration.
-
-	.FOCCFG = 0x1d,     // Frequency Offset Compensation Configuration. 
-	.BSCFG = 0x1c,      // Bit synchronization Configuration. 
-
-	.AGCCTRL2 =0xc7, // AGCCTRL2 AGC control.
-	.AGCCTRL1 =0x00, // AGCCTRL1 AGC control.
-	.AGCCTRL0 =0xb2, // AGCCTRL0 AGC control.
-
-	.WOREVT1 = 0x87,
-	.WOREVT0 = 0x6b,	
-	.WORCTRL = 0xf8,
-
-	.FREND1 = 0xb6,     // Front end RX configuration. 
-	.FREND0 = 0x10,
-
-	.FSCAL3 =0xea, // FSCAL3 Frequency synthesizer calibration.
-	.FSCAL2 =0x2A, // FSCAL2 Frequency synthesizer calibration.
-	.FSCAL1 =0x00, // FSCAL1 Frequency synthesizer calibration.
-	.FSCAL0 =0x11, // FSCAL0 Frequency synthesizer calibration.
-
-	.FSTEST =0x59, // FSTEST Frequency synthesizer calibration.
-	.TEST2  =0x81, // TEST2 Various test settings.
-	.TEST1  =0x35, // TEST1 Various test settings.
 	.TEST0  =0x09, // TEST0 Various test settings.
 			
 };
-*/
+
+
 
 /*
-//lhc
-
+lhc old
 uint8_t PA_table[8] = {0xc0,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
 struct c1101_rfsettings_s rfSettings = {
-    .IOCFG2 = 0x02,    // GDO2 output pin configuration
+    .IOCFG2 = 0x06,    // GDO2 output pin configuration
     .IOCFG1 = 0x2e,    // GDO0 output pin configuration
     .IOCFG0 = 0x0e,    // GDO0 output pin configuration
 
@@ -503,7 +443,9 @@ struct c1101_rfsettings_s rfSettings = {
 };
 */
 
+
 /*
+//lhc new1
 uint8_t PA_table[8] = {0xc0,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
 struct c1101_rfsettings_s rfSettings = {
@@ -570,7 +512,61 @@ struct c1101_rfsettings_s rfSettings = {
 };
 */
 
+/*
 
+//lhc new2
+uint8_t PA_table[8] = {0x60,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+struct c1101_rfsettings_s rfSettings = {
+    .IOCFG2 = 0x06,    // GDO2 output pin configuration
+    .IOCFG1 = 0x2e,    // GDO0 output pin configuration
+    .IOCFG0 = 0x0e,    // GDO0 output pin configuration
+    .FIFOTHR = 0x07,    // FIFOTHR
+	.SYNC1 = 0x9b,      // Frequency control word, middle byte. 
+	.SYNC0 = 0xad,      // Frequency control word, low byte.
+    .PKTLEN = 0xff,    // Packet length.
+    .PKTCTRL1 = 0x04,  // Packet automation control.
+    .PKTCTRL0 = 0x05,  // Packet automation control.
+    .ADDR = 0x00,      // Device address.
+	.CHANNR = 0x00,     // Channel number
+	.FSCTRL1 = 0x0a,    // Frequency synthesizer control. 
+	.FSCTRL0 = 0x00,    // Frequency synthesizer control. 
+	.FREQ2 = 0x10,      // Frequency control word, high byte. 
+	.FREQ1 = 0xb1,      // Frequency control word, middle byte. 
+	.FREQ0 = 0x3b,      // Frequency control word, low byte. 
+	.MDMCFG4 =0x1e,    // Modem configuration. 
+	.MDMCFG3 =0x3b,    // Modem configuration. 
+	.MDMCFG2 =0x73,    // Modem configuration. 
+	.MDMCFG1 =0x23,    // Modem configuration. 
+	.MDMCFG0 =0xf8,    // Modem configuration. 
+	.DEVIATN = 0x00,    // Modem deviation setting (when FSK modulation is enabled). 
+	.MCSM2 = 0x07,     // Main Radio Control State Machine configuration.
+	.MCSM1 = 0x30,     // Main Radio Control State Machine configuration.
+	.MCSM0 = 0x18,     // Main Radio Control State Machine configuration.
+	.FOCCFG = 0x1d,     // Frequency Offset Compensation Configuration. 
+	.BSCFG = 0x1c,      // Bit synchronization Configuration. 
+	.AGCCTRL2 = 0xc7,   // AGC control. 
+	.AGCCTRL1 = 0x00,   // AGC control. 
+	.AGCCTRL0 =0xb0,   // AGC control. 
+	.WOREVT1 = 0x28,
+	.WOREVT0 = 0xa0,	
+	.WORCTRL = 0x38,
+	.FREND1 = 0xb6,     // Front end RX configuration. 
+	.FREND0 = 0x10,
+	.FSCAL3 = 0xea,     // Frequency synthesizer calibration. 
+	.FSCAL2 = 0x2a,     // Frequency synthesizer calibration. 
+	.FSCAL1 = 0x00,     // Frequency synthesizer calibration. 
+	.FSCAL0 = 0x1f,    // Frequency synthesizer calibration. 
+    .RCCTRL1 = 0x41,
+    .RCCTRL1 = 0x00,
+	.FSTEST =0x59, // FSTEST Frequency synthesizer calibration.
+	.PTEST  =0x7f,
+	.AGCTEST=0x3f,
+	.TEST2  =0x88, // TEST2 Various test settings.
+	.TEST1  =0x31, // TEST1 Various test settings.
+	.TEST0  =0x09, // TEST0 Various test settings.};
+};
+
+*/
 
 /****************************************************************************
  * Private Data Types
@@ -590,7 +586,6 @@ static int fs_poll(FAR struct file *filep, FAR struct pollfd *fds,bool setup);
 
 struct cc1101_status
 {
-	int		changemodeflag;
 	int		workmode;
 	int		rx_status;
 	int		tx_status;
@@ -1047,7 +1042,7 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 			
 	    	//nbytes
 			cc1101_rxtx_status.rx_len = nbytes;
-			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, cc1101_rxtx_status.rxbuf, (nbytes > sizeof(cc1101_rxtx_status.rxbuf)) ? sizeof(cc1101_rxtx_status.rxbuf) : nbytes);
+			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, cc1101_rxtx_status.rxbuf, (cc1101_rxtx_status.rx_len > sizeof(cc1101_rxtx_status.rxbuf)) ? sizeof(cc1101_rxtx_status.rxbuf) : cc1101_rxtx_status.rx_len);
 
 			//crc
 			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, crc, 2);
@@ -1088,9 +1083,6 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 	else if(cc1101_rxtx_status.workmode == CC1101_MODE_TX)
 	{		
 		//wait untill txbyte ok
-
-		cc1101_rxtx_status.workmode = CC1101_MODE_RX;
-		cc1101_rxtx_status.tx_status = SUCCESS;
 		spierr("cc1101 <%d> TX int\n",cc1101_interrupt);
 	}
 	else
@@ -1391,17 +1383,50 @@ int cc1101_calcRSSIdBm(int rssi)
 
 int cc1101_receive(FAR struct cc1101_dev_s *dev)
 {
-  ASSERT(dev);
+	ASSERT(dev);
 
-  cc1101_rxtx_status.workmode = CC1101_MODE_RX;
+	cc1101_strobe(dev, CC1101_SIDLE);
+	cc1101_strobe(dev, CC1101_SFRX);
 
-  cc1101_strobe(dev, CC1101_SIDLE);
-  cc1101_strobe(dev, CC1101_SFRX);
+	cc1101_strobe(dev, CC1101_SRX | CC1101_READ_SINGLE);
 
-  cc1101_strobe(dev, CC1101_SRX | CC1101_READ_SINGLE);
-    	
-  return 0;
+	//add by liushuhe 2018.01.04
+	cc1101_rxtx_status.workmode = CC1101_MODE_RX;
+	rfSettings.IOCFG2 = CC1101_GDO2_RX;
+    if(cc1101_access(dev, CC1101_IOCFG2, (FAR uint8_t *)&rfSettings.IOCFG2, -1) < 0)
+    {
+		spierr("cc1101 Rx gdo init error\n");
+    }
+	rfSettings.FIFOTHR = CC1101_THER_RX;
+    if(cc1101_access(dev, CC1101_FIFOTHR, (FAR uint8_t *)&rfSettings.FIFOTHR, -1) < 0)
+    {
+		spierr("cc1101 Rx FIFOTHR init error\n");
+    }
+	return 0;
 }
+
+int cc1101_sendmode(FAR struct cc1101_dev_s *dev)
+{
+	ASSERT(dev);
+
+	//cc1101_strobe(dev, CC1101_SIDLE);
+	//cc1101_strobe(dev, CC1101_SFTX);
+
+    cc1101_rxtx_status.workmode = CC1101_MODE_TX;
+	rfSettings.IOCFG2 = CC1101_GDO2_TX;
+    if(cc1101_access(dev, CC1101_IOCFG2, (FAR uint8_t *)&rfSettings.IOCFG2, -1) < 0)
+    {
+		spierr("cc1101 tx gdo init error\n");
+    }
+	rfSettings.FIFOTHR = CC1101_THER_TX;
+    if(cc1101_access(dev, CC1101_FIFOTHR, (FAR uint8_t *)&rfSettings.FIFOTHR, -1) < 0)
+    {
+		spierr("cc1101 tx FIFOTHR init error\n");
+    }
+	return 0;
+}
+
+
 
 int cc1101_read(FAR struct cc1101_dev_s *dev, uint8_t * buf, size_t size)
 {
@@ -1409,16 +1434,10 @@ int cc1101_read(FAR struct cc1101_dev_s *dev, uint8_t * buf, size_t size)
 
 	ASSERT(dev);
 
-	while(cc1101_rxtx_status.rx_status != SUCCESS)
-	{
-		usleep(1*1000);
-	}
+    memcpy(buf,cc1101_rxtx_status.rxbuf,cc1101_rxtx_status.rx_len);
 
 	cc1101_rxtx_status.rx_status = FAIL;
-    //memcpy(buf,cc1101_rxtx_status.rxbuf,strlen(cc1101_rxtx_status.rxbuf));
     
-    memcpy(buf,cc1101_rxtx_status.rxbuf,cc1101_rxtx_status.rx_len);
-	
 	return cc1101_rxtx_status.rx_len;
 }
 
@@ -1442,24 +1461,23 @@ int cc1101_write(FAR struct cc1101_dev_s *dev, const uint8_t *buf, size_t size)
       packetlen = size;
     }
 
-
-  	cc1101_access(dev, CC1101_MARCSTATE, (FAR uint8_t *)&ttttt, -1);
-    spierr("CC1101_MARCSTATE=%x.....................\n",ttttt);
-
-
+	cc1101_access(dev, CC1101_MARCSTATE, (FAR uint8_t *)&ttttt, -1);
+	spierr("CC1101_MARCSTATE=%x\n",ttttt);
 	ttttt = cc1101_strobe(dev, CC1101_TXBYTES);
-    spierr("CC1101_TXBYTES=%x.....................\n",ttttt);
+	spierr("CC1101_TXBYTES=%x\n",ttttt);
 
+	cc1101_strobe(dev, CC1101_SIDLE);
+	cc1101_strobe(dev, CC1101_SFTX);
 
-  cc1101_strobe(dev, CC1101_SIDLE);
-  cc1101_strobe(dev, CC1101_SFTX);
-  
-  //len
-  cc1101_access(dev, CC1101_TXFIFO, &packetlen, -1);
-  //addr                                     
-  //cc1101_access(dev, CC1101_TXFIFO, (FAR uint8_t *)&dev->rfsettings->ADDR, -1);
-  //data
-  ret = cc1101_access(dev, CC1101_TXFIFO, (FAR uint8_t *)buf, -(size));
+	cc1101_access(dev, CC1101_MARCSTATE, (FAR uint8_t *)&ttttt, -1);
+	spierr("CC1101_MARCSTATE=%x\n",ttttt);
+	ttttt = cc1101_strobe(dev, CC1101_TXBYTES);
+	spierr("CC1101_TXBYTES=%x\n",ttttt);
+
+	//len
+	cc1101_access(dev, CC1101_TXFIFO, &packetlen, -1);
+	//data
+	ret = cc1101_access(dev, CC1101_TXFIFO, (FAR uint8_t *)buf, -(packetlen));
 
 
   cc1101_rxtx_status.tx_len = ret;
@@ -1469,28 +1487,22 @@ int cc1101_write(FAR struct cc1101_dev_s *dev, const uint8_t *buf, size_t size)
 
 int cc1101_send(FAR struct cc1101_dev_s *dev)
 {
-  int cnt=0;
-  
-  ASSERT(dev);
+	int cnt=0;
 
-  cc1101_interrupt = 0;
+	ASSERT(dev);
 
-  
-  cc1101_strobe(dev, CC1101_STX);
-  
-  //add by liushuhe 2017.12.01
-  while (cc1101_rxtx_status.tx_status != SUCCESS)
-  {
-      usleep(1*1000);
-	  cnt++;
-	  if(cnt > 500)
-	  {
-		  cnt = 0;
-		  break;
-	  }
-  }
-  
-  return cc1101_rxtx_status.tx_len;
+	//cc1101_interrupt = 0;
+	cc1101_strobe(dev, CC1101_STX);
+
+    //wait send ok
+    usleep(10*1000);
+
+	
+	cc1101_rxtx_status.tx_status = SUCCESS;
+	//goto recv
+	cc1101_receive(dev);
+
+	return cc1101_rxtx_status.tx_len;
 }
 
 int cc1101_idle(FAR struct cc1101_dev_s *dev)
@@ -1606,7 +1618,7 @@ static ssize_t fs_read(FAR struct file *filep, FAR char *buffer, size_t buflen)
 	/* TODO: Should we check permissions here? */
 	/* Audio read operations get passed directly to the lower-level */
 
-	cc1101_rxtx_status.workmode = CC1101_MODE_RX;
+	cc1101_receive(lower->c1101_dev);
 	
 	//start rx
 	if (lower->ops->setmode_receive != NULL)
@@ -1636,7 +1648,7 @@ static ssize_t fs_write(FAR struct file *filep, FAR const char *buffer, size_t b
 
 	/* Audio write operations get passed directly to the lower-level */
 
-    cc1101_rxtx_status.workmode = CC1101_MODE_TX;
+	cc1101_sendmode(lower->c1101_dev);
 
 	//set data to fifo
 	if (lower->ops->write != NULL)
@@ -1671,10 +1683,6 @@ static int fs_poll(FAR struct file *filep, FAR struct pollfd *fds,bool setup)
   /* Get exclusive access */
   do
     {
-
-		cc1101_rxtx_status.workmode = CC1101_MODE_RX;
-
-	
       ret = sem_wait(&priv->devsem);
       /* The only case that an error should occur here is if the wait was
        * awakened by a signal.
