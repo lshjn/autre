@@ -1056,31 +1056,27 @@ int cc1101_eventcb(int irq, FAR void *context,FAR void *arg)
 			cc1101_access((FAR struct cc1101_dev_s *)arg, CC1101_RXFIFO, crc, 2);
 			if(crc[1]&0x80)
 			{
+				cc1101_rxtx_status.rx_status = SUCCESS;
 				spierr("crc ok\n");
 			}
 			else
 			{
+				cc1101_rxtx_status.rx_status = FAIL;
 				spierr("crc error\n");
 				crcerror++;
 			}
 	 
-			/*
-	        int i=0;
-			for(i=0;i<nbytes;i++)
-			{
-				spierr("[%d]=%d     \n",i,cc1101_rxtx_status.rxbuf[i]);
-			}
-			*/
-			
 			//add by liushuhe 2017.12.04	  
 			cc1101_receive((FAR struct cc1101_dev_s *)arg);
 			
-			cc1101_rxtx_status.rx_status = SUCCESS;
-
-			CC1101_pollnotify(cc1101_fd);
+			if(cc1101_rxtx_status.rx_status == SUCCESS)
+			{
+				CC1101_pollnotify(cc1101_fd);
+			}	
 		}
 		else
 		{
+			cc1101_rxtx_status.rx_status = FAIL;
 			//add by liushuhe 2017.12.04	  
 			cc1101_receive((FAR struct cc1101_dev_s *)arg);
 			spierr("Error: cc1101 <%d> RX int status=%d  nbytes=%d\n",cc1101_interrupt,status,nbytes);
