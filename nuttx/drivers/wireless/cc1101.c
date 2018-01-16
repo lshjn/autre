@@ -353,7 +353,13 @@ struct c1101_rfsettings_s rfSettings = {
 	.FSCAL2 =0x2A, // FSCAL2 Frequency synthesizer calibration.
 	.FSCAL1 =0x00, // FSCAL1 Frequency synthesizer calibration.
 	.FSCAL0 =0x11, // FSCAL0 Frequency synthesizer calibration.
+	
+    .RCCTRL1 = 0x41,
+    .RCCTRL1 = 0x00,
 	.FSTEST =0x59, // FSTEST Frequency synthesizer calibration.
+	.PTEST  =0x7f,
+	.AGCTEST=0x3f,
+	
 	.TEST2  =0x81, // TEST2 Various test settings.
 	.TEST1  =0x35, // TEST1 Various test settings.
 	.TEST0  =0x09, // TEST0 Various test settings.		
